@@ -29,7 +29,32 @@ returns:
     sortedClassCount[0][0]-分类结果
 """
 def classify0(inX,dataSet,labels,k):
+    #返回shape[0]的行数
     dataSetSize=dataSet.shape[0]
+    #在列向量方向上重复inX共1次（横向），行向量方向上重复inX共dataSetSize次（纵向）
+    diffMat=np.tile(inX, (dataSetSize,1))-dataSet
+    #二维特征相减后平方
+    sqDiffMat=diffMat**2
+    #sum（）所有元素相加，sum(0)列相加，sum(1)行相加
+    sqDistances=sqDiffMat.sum(axis=1)
+    #开方，计算出距离
+    distances=sqDistances**0.5
+    #返回distances中元素从小到大排序后的索引值
+    sortedDistIndices=distances.argsort()
+    #定一个记录类别次数的字典
+    classCount={}
+    for i in range(k):
+        #取出前K个元素的类别
+        voteIlabel=labels[sortedDistIndices[i]]
+        #字典的get()方法，返回指定键的值，如果值不在字典中返回默认值。
+        #记录类别次数
+        classCount[voteIlabel]=classCount.get(voteIlabel,0)+1
+        
+        
+    #reverse降序排序字典
+    sortedClassCount=sorted(classCount.items(),key=operator.itemgetter(1),reverse=True)
+    #返回次数最多的类别，即所要分类的类别
+    return sortedClassCount[0][0]
     
     
 
@@ -40,5 +65,7 @@ def classify0(inX,dataSet,labels,k):
 if __name__=="__main__":
     #创建数据集
     group,labels=creatDatSet()
-    print(group)
-    print(labels)
+    #print(group)
+    #print(labels)
+    sortresult=classify0([101,20], group, labels, 3)
+    print(sortresult)
