@@ -1,8 +1,21 @@
 # -*- coding:utf-8 -*-
 
 import numpy as np
+from matplotlib.font_manager import FontProperties
+import matplotlib.lines as mlines
+import matplotlib.pyplot as plt
+from IPython.core.pylabtools import figsize
 
 
+
+"""
+    函数说明：打开并解析文件，对数据进行分类：1代表不喜欢，2代表魅力一般，3极具魅力
+    parameters:
+        filename:文件名
+    Returns:
+        returnMat:特征矩阵
+        classLableVector-分类Label向量
+"""
 def file2matrix(filename):
     #打开文件
     fr=open(filename)
@@ -36,9 +49,82 @@ def file2matrix(filename):
         
     return returnMat,classLabelVector
 
+"""
+    函数说明：数据可视化
+    parameters:
+        datingDataMat:特征矩阵
+        classLableVector-分类Label向量
+    Returns:
+                        无
+        
+"""
+
+def showdatas(datingDataMat,datingLabels):
+    #设置字体
+    font=FontProperties(fname=r"c:\windows\fonts\simsun.ttc",size=14)
+    #设置画布,不共享xy轴，画布大小为（13，8）
+    #当nrows=2, ncols=2，代表画布被划分为四个区域，axs[0][0]代表第一个区域
+    fig,axs=plt.subplots(nrows=2, ncols=2, sharex=False, sharey=False, 
+                         figsize=(13,13))
+    numberOfLabels=len(datingLabels)
+    LabelsColors=[]
+    for i in datingLabels:
+        if i == 1:
+            LabelsColors.append('black')
+        if i == 2:
+            LabelsColors.append('orange')
+        if i == 3:
+            LabelsColors.append('red')
+    #画出散点图，以datingDataMat矩阵的第一和第二列数据画散点数据，散点大小为15，透明度为0.5
+    axs[0][0].scatter(x=datingDataMat[:,0],y=datingDataMat[:,1],color=LabelsColors,s=15,alpha=.5)
+    
+    #设置标题,x轴label,y轴label
+    axs0_title_text=axs[0][0].set_title('每年获得的飞行常客里程数与玩视频游戏所消耗时间占比',FontProperties=font)
+    axs0_xlabel_text=axs[0][0].set_xlabel('每年获得的飞行常客里程数',FontProperties=font)
+    axs0_ylabel_text=axs[0][0].set_ylabel('玩视频游戏所消耗时间占',FontProperties=font)
+    plt.setp(axs0_title_text,size=9,weight='bold',color='red')
+    plt.setp(axs0_xlabel_text,size=7,weight='bold',color='black')
+    plt.setp(axs0_ylabel_text,size=7,weight='bold',color='black')
+
+    #画出散点图，以datingDataMat矩阵的第一和第三列数据画散点数据，散点大小为15，透明度为0.5
+    axs[0][1].scatter(x=datingDataMat[:,0],y=datingDataMat[:,2],color=LabelsColors,s=15,alpha=.5)
+    
+    axs1_title_text=axs[0][1].set_title('每年获得的飞行常客里程数与每周消费的冰激淋公升数',FontProperties=font)
+    axs1_xlabel_text=axs[0][1].set_xlabel('每年获得的飞行常客里程数',FontProperties=font)
+    axs1_ylabel_text=axs[0][1].set_ylabel('每周消费的冰激淋公升数',FontProperties=font)
+    plt.setp(axs1_title_text,size=9,weight='bold',color='red')
+    plt.setp(axs1_xlabel_text,size=7,weight='bold',color='black')
+    plt.setp(axs1_ylabel_text,size=7,weight='bold',color='black')
+    
+    #画出散点图，以datingDataMat矩阵的第二和第三列数据画散点数据，散点大小为15，透明度为0.5
+    axs[1][0].scatter(x=datingDataMat[:,1],y=datingDataMat[:,2],color=LabelsColors,s=15,alpha=.5)
+    
+    axs2_title_text=axs[1][0].set_title('玩视频游戏所消耗时间占比与每周消费的冰激淋公升数',FontProperties=font)
+    axs2_xlabel_text=axs[1][0].set_xlabel('玩视频游戏所消耗时间占比',FontProperties=font)
+    axs2_ylabel_text=axs[1][0].set_ylabel('每周消费的冰激淋公升数',FontProperties=font)
+    plt.setp(axs2_title_text,size=9,weight='bold',color='red')
+    plt.setp(axs2_xlabel_text,size=7,weight='bold',color='black')
+    plt.setp(axs2_ylabel_text,size=7,weight='bold',color='black')
+    
+    #设置图例
+    didntLike=mlines.Line2D([],[],color='black',marker='.',markersize=6,label='didntLike')
+    smallDoses=mlines.Line2D([],[],color='orange',marker='.',markersize=6,label='smallDoses')
+    largeDoses=mlines.Line2D([],[],color='red',marker='.',markersize=6,label='largeDoses')
+    
+    #添加图例
+    axs[0][0].legend(handles=[didntLike,smallDoses,largeDoses])
+    axs[0][1].legend(handles=[didntLike,smallDoses,largeDoses])
+    axs[1][0].legend(handles=[didntLike,smallDoses,largeDoses])
+    
+    #显示图片
+    plt.show()
+
+
+
+
+
 
 if __name__=='__main__':
     
     datingDataMat,datingLabels=file2matrix("datingTestSet.txt")
-    print(datingDataMat)
-    print(datingLabels)
+    showdatas(datingDataMat, datingLabels)
